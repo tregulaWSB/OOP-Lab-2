@@ -34,7 +34,7 @@ class Playlist:
     if track in self.tracks:
       self.tracks.remove(track)
     else:
-      print(f"Brak utworu {track.title} na playliście.")
+      print(f"Brak utworu '{track.title}' na playliście.")
 
   def combine_duration(self) -> str:
     sum_decimal = sum(track.compute_duration() for track in self.tracks)
@@ -56,6 +56,9 @@ class Playlist:
     print(f"Odtwarzanie playlisty '{self.name}'")
     for track in self.tracks:
       track.play()
+
+  def change_name(self, name: str):
+    self.name = name
 
 def main():
   track1 = Track("Here Comes the Sun", "The Beatles", "3:05")
