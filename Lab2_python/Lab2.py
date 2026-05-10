@@ -57,8 +57,43 @@ class Playlist:
     for track in self.tracks:
       track.play()
 
-  def change_name(self, name: str):
+  def rename(self, name: str):
     self.name = name
+
+class User:
+  def __init__(self, name: str, email: str):
+    self.name = name
+    self.email = email
+    self.playlists = []
+
+  def display_info(self):
+    print(f"Użytkownik {self.name}, email: {self.email}, ilość playlist: {len(self.playlists)}")
+
+  def get_all_playlists(self) -> list:
+    all_playlists = [playlist.name for playlist in self.playlists]
+    return all_playlists
+    
+  def get_playlist(self, name: str) -> Playlist:
+    playlists = [p for p in self.playlists if p.name == name]
+    if playlists:
+      return playlists[0]
+    else:
+      raise Exception("Błąd: Brak playlisty o podanej nazwie.")
+
+  def create_playlist(self, name: str) -> Playlist:
+    if name in self.get_all_playlists():
+      print("Playlista o podanej nazwie już istnieje, wybierz inną nazwę.")
+      return
+    playlist = Playlist(name)
+    self.playlists.append(playlist)
+    return playlist
+
+  def remove_playlist(self, playlist: Playlist):
+    if not playlist in self.playlists:
+      print("Nie znaleziono playlisty użytkownika.")
+      return
+    self.playlists.remove(playlist)
+    print(f"Usunięto playlistę '{playlist.name}'")
 
 def main():
   track1 = Track("Here Comes the Sun", "The Beatles", "3:05")
@@ -66,15 +101,24 @@ def main():
   track3 = Track("Always Forever", "Cults", "3:44")
   track4 = Track("Sultans of Swing", "Dire Straits", "5:48")
 
-  playlist1 = Playlist("Ulubione")
+  user1 = User("jan", "jan.kowalski@email.pl")
 
+  playlist1 = user1.create_playlist("Playlista 1")
   playlist1.add_track(track1)
-  playlist1.add_track(track2)
   playlist1.add_track(track3)
-  playlist1.add_track(track4)
+
+  playlist2 = user1.create_playlist("Playlista 2")
+  playlist2.add_track(track2)
+  playlist2.add_track(track4)
 
   playlist1.display_info()
-  playlist1.play()
+  playlist2.display_info()
 
+  user1.display_info()
+  user1.remove_playlist(playlist2)
+  user1.display_info()
+  
+  playlist1.play()
+  
 if __name__ == "__main__":
   main()
