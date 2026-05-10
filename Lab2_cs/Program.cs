@@ -112,6 +112,65 @@ namespace Lab2_cs
     }
   }
 
+  public class User
+  {
+    public string Name { get; }
+    public string Email { get; }
+    private readonly List<Playlist> playlists = new List<Playlist>();
+
+    public User(string name, string email)
+    {
+      Name = name;
+      Email = email;
+    }
+
+    public void DisplayInfo()
+    {
+      Console.WriteLine($"Użytkownik {Name}, email: {Email}, ilość playlist: {playlists.Count}");
+    }
+
+    public List<string> GetAllPlaylists()
+    {
+      return playlists.Select(p => p.Name).ToList();
+    }
+
+    public Playlist GetPlaylist(string name)
+    {
+      var playlist = playlists.FirstOrDefault(p => p.Name == name);
+      if (playlist != null)
+      {
+        return playlist;
+      }
+      else
+      {
+        throw new Exception("Błąd: Brak playlisty o podanej nazwie.");
+      }
+    }
+
+    public Playlist CreatePlaylist(string name)
+    {
+      if (GetAllPlaylists().Contains(name))
+      {
+        Console.WriteLine("Playlista o podanej nazwie już istnieje, wybierz inną nazwę.");
+        return null;
+      }
+      var playlist = new Playlist(name);
+      playlists.Add(playlist);
+      return playlist;
+    }
+
+    public void RemovePlaylist(Playlist playlist)
+    {
+      if (!playlists.Contains(playlist))
+      {
+        Console.WriteLine("Nie znaleziono playlisty użytkownika.");
+        return;
+      }
+      playlists.Remove(playlist);
+      Console.WriteLine($"Usunięto playlistę '{playlist.Name}'");
+    }
+  }
+
   class Program
   {
     static void Main()
@@ -121,17 +180,28 @@ namespace Lab2_cs
       var track3 = new Track("Always Forever", "Cults", "3:44");
       var track4 = new Track("Sultans of Swing", "Dire Straits", "5:48");
 
-      var playlist1 = new Playlist("Playlista 1");
-      playlist1.DisplayInfo();
-      
+      var user1 = new User("jan", "jan.kowalski@email.pl");
+      user1.DisplayInfo();
+
+      var playlist1 = user1.CreatePlaylist("Playlista 1");
       playlist1.AddTrack(track1);
       playlist1.AddTrack(track2);
-      playlist1.AddTrack(track3);
-      playlist1.AddTrack(track4);
-      
+
       playlist1.DisplayInfo();
-      
       playlist1.Play();
+
+      var playlist2 = user1.CreatePlaylist("Playlista 2");
+      playlist2.AddTrack(track3);
+      playlist2.AddTrack(track4);
+
+      playlist2.DisplayInfo();
+      playlist2.Play();
+
+      user1.DisplayInfo();
+
+      user1.RemovePlaylist(playlist2);
+
+      user1.DisplayInfo();
     }
   }
 }
